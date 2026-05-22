@@ -34,6 +34,8 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
+      unique: true,
+      sparse: true, // Sparse allows multiple users to lack phone numbers without causing duplicate index key errors
     },
     profilePicture: {
       type: String,

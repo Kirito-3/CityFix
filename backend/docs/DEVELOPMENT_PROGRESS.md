@@ -24,15 +24,17 @@ This file serves as a live document to track completed features, pending milesto
   * Created `StatusLog` schema for complaint timeline tracking.
   * Created `Notification` schema.
 * [x] **API v1 Module Routing:** Set up authentication routes (`/auth`), complaints routes (`/complaints`), administrator dashboard routes (`/admin`), and alert routes (`/notifications`).
+* [x] **Authentication Module Completeness:** Fully implemented signup (`POST /signup`), login (`POST /login`), getMe (`GET /me`), custom Zod checks, email/phone uniqueness validations, and verified logic using programmatic integration scripts.
 * [x] **Express & Server Integration:** Programmed `app.js` and `server.js` and separated execution routines for easier automated endpoint testing.
 * [x] **Real-time WebSockets:** Established a modular Socket.IO wrapper split into `sockets/index.js` (for bootstrapping) and `sockets/complaint.socket.js` (for managing room subscriptions).
-* [x] **Technical Documentation:** Written complete guides for project directories, REST endpoint routes, and setup instructions.
+* [x] **Technical Documentation:** Written complete guides for project directories, REST endpoint routes, setup instructions, and Postman reference parameters.
 
 ---
 
 ## 3. Pending Milestones
 
 ### Phase 2: User Access & Profile Enhancements
+* [x] **Complete Authentication Module:** Fully integrated credential verification layers, token expiration controls, password encryption, and duplicate checks.
 * [ ] **Google OAuth Sign-in integration** for quicker citizen registration.
 * [ ] **Multer Media Storage hookups** with Cloudinary configurations for processing real images uploaded by citizens.
 * [ ] **FCM Push Notification integrations** to trigger standard mobile push alerts when app sockets are offline.

@@ -31,6 +31,7 @@ This document lists all system requirements, library dependencies, architecture 
 
 ### Development Dependencies
 * nodemon (v3.1.x) - Automatic node process reloader watching source code updates.
+* supertest (v7.0.x) - Integration testing client programmatically asserting Express REST server endpoints.
 
 ---
 

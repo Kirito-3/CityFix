@@ -20,9 +20,17 @@ export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, role, phone } = req.body;
 
   // Verify if a user with that email already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) {
+  const existingUserByEmail = await User.findOne({ email });
+  if (existingUserByEmail) {
     throw new ApiError(400, 'Registration failed: A user with this email address already exists.');
+  }
+
+  // Verify if a user with that phone number already exists
+  if (phone) {
+    const existingUserByPhone = await User.findOne({ phone });
+    if (existingUserByPhone) {
+      throw new ApiError(400, 'Registration failed: A user with this phone number already exists.');
+    }
   }
 
   // Create the new user record in MongoDB

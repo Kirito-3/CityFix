@@ -65,17 +65,23 @@ This document catalogs all endpoints, parameters, request payloads, and security
 #### `POST /auth/signup`
 * **Access:** Public (Guest)
 * **Purpose:** Register a citizen or authority account.
+* **Payload Requirements:**
+  * `name`: String (2-50 characters), required.
+  * `email`: String (valid format), unique, required. If a profile already exists with this email, returns `400 Bad Request`.
+  * `password`: String (minimum 6 characters), required.
+  * `role`: Optional enum (`citizen`, `authority`, `admin`), defaults to `citizen`.
+  * `phone`: String (minimum 10 characters), unique, optional. If provided and already registered by another user, returns `400 Bad Request`.
 * **Payload (JSON):**
   ```json
   {
     "name": "John Doe",
     "email": "john.doe@example.com",
     "password": "securepassword123",
-    "role": "citizen", // Optional. enum: ['citizen', 'authority']
-    "phone": "9876543210" // Optional
+    "role": "citizen",
+    "phone": "9876543210"
   }
   ```
-* **Response Data:** Returns the created user object and a JWT authorization token.
+* **Response Data:** Returns the created user object (excluding the hashed password) and a JWT authorization token.
 
 #### `POST /auth/login`
 * **Access:** Public (Guest)
