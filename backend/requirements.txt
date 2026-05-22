@@ -1,0 +1,101 @@
+# ==============================================================================
+# CityFix Backend Reference & Architecture Requirements
+# ==============================================================================
+
+This document lists all system requirements, library dependencies, architecture decisions, and configurations for the CityFix Express backend.
+
+---
+
+## 1. Libraries & Dependency Registry
+
+### Production Core Dependencies
+* express (v4.19.x) - Central HTTP web server framework.
+* mongoose (v8.4.x) - ODM wrapper for MongoDB connection, schema validation, and modeling.
+* cors (v2.8.x) - Middleware enabling Cross-Origin Resource Sharing.
+* helmet (v7.1.x) - Security middleware adding standard HTTP security response headers.
+* morgan (v1.10.x) - Request logger middleware for standard console logging.
+* dotenv (v16.4.x) - Loads key environment variables from a .env file.
+* zod (v3.23.x) - Runtime schema-based validation library for validating incoming request objects.
+
+### Security & Authentication
+* bcryptjs (v2.4.x) - Secure hashing algorithm for passwords (12 salt rounds).
+* jsonwebtoken (v9.0.x) - Signs and verifies stateless JSON Web Tokens for auth.
+* express-rate-limit (v7.3.x) - Protects routes against Denial of Service (DoS) and brute force.
+
+### Uploads & File Management
+* multer (v1.4.x) - Node.js multipart form-data middleware for processing image/file uploads.
+* cloudinary (v2.2.x) - Native software development kit (SDK) to upload assets to Cloudinary media cloud.
+
+### Realtime Communication
+* socket.io (v4.7.x) - Client-server bidirectionally coupled event broker framework.
+
+### Development Dependencies
+* nodemon (v3.1.x) - Automatic node process reloader watching source code updates.
+
+---
+
+## 2. Mandatory Environment Variables
+
+Create a local `.env` file containing the following fields:
+
+* PORT - TCP listening port (default: 5000)
+* NODE_ENV - Environment identifier (`development` or `production`)
+* CLIENT_URL - Cross-Origin whitelist url (e.g. `http://localhost:3000`)
+* MONGODB_URI - Complete MongoDB connection string (local or Atlas cluster)
+* JWT_SECRET - Crytographically robust signature salt
+* JWT_EXPIRES_IN - Valid token duration (e.g., `7d`)
+* BCRYPT_SALT_ROUNDS - Hashing difficulty (default: `12`)
+* RATE_LIMIT_WINDOW_MS - Rate limiting duration window (in milliseconds)
+* RATE_LIMIT_MAX - Allowed request quota per window per IP
+* CLOUDINARY_CLOUD_NAME - Cloudinary configuration property
+* CLOUDINARY_API_KEY - Cloudinary credentials key
+* CLOUDINARY_API_SECRET - Cloudinary signature secret
+* FIREBASE_SERVICE_ACCOUNT_PATH - File path targeting Firebase notification credentials
+
+---
+
+## 3. Architecture Blueprint Decisions
+
+### A. ES Modules (ESM)
+We compile natively inside Node.js by setting `"type": "module"` in `package.json`. This provides clean, standard imports (`import express from 'express'`) and standard lexical features.
+
+### B. Separated Express App & HTTP Server
+Decoupling application routes and middlewares (`app.js`) from server bootstrap processes (`server.js`):
+* App Isolation: Isolates request processing flow from port bindings.
+* Testability: Supertest can bind programmatic endpoints directly to `app.js` instances without starting physical network listeners or fighting port collisions.
+* Clean Hookups: Starts database connections first, boots HTTP socket connections, and catches runtime thread failures cleanly.
+
+### C. GeoJSON Spatial Schema
+Location coordinates are indexed inside Mongo using a GeoJSON schema:
+```json
+{
+  "location": {
+    "type": "Point",
+    "coordinates": [longitude, latitude]
+  }
+}
+```
+Mongoose applies the `2dsphere` index to the schema, unlocking complex spatial queries such as finding complaints reported within a 5km radius of a user.
+
+### D. Separation of Complaint Status Logs
+Using an independent `StatusLog` collection for Complaint timelines:
+* Database Scale: Keeping detailed logs inside separate documents avoids hitting Mongoose's 16MB document size ceiling.
+* Data Integrity: Avoids array-growth issues inside the main Complaint model. Each status transition produces an audit entry recording: Complaint ID, User ID (author), Initial Status, Target Status, and Remarks.
+
+### E. Abstracted Winston Logger Placeholder
+Using a custom console wrapper `utils/logger.js` ensures logging uses unified, structured patterns throughout development, which can easily be upgraded to write to a cloud transporter (Winston/Pino) by changing one file.
+
+---
+
+## 4. Initialization & Setup Guide
+
+1. Navigate to the backend directory:
+   `cd backend`
+2. Install the declared Node modules:
+   `npm install`
+3. Configure the local environment file:
+   `cp .env.example .env`
+4. Start the development server (auto-reloading):
+   `npm run dev`
+5. Run in standard production environment:
+   `npm start`
