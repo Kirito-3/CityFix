@@ -191,7 +191,60 @@ Strictly restricted to Admin role. Changes status, sends realtime socket notifie
 
 ---
 
-## 4. Sample Error Responses
+## 4. In-App Notifications & FCM Token Module Reference
+
+Enables citizens and authorities to fetch active alerts and register device push tokens.
+
+### A. Register Firebase FCM Token (POST)
+Registers or updates a citizen's or administrator's device token to deliver FCM push alerts.
+
+* **Endpoint:** `{{base_url}}/notifications/register-token`
+* **Method:** `POST`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+  * `Content-Type`: `application/json`
+* **Body (JSON):**
+  ```json
+  {
+    "token": "d7-a5BcXyZ1234567890_fcm_device_token_signature_hash"
+  }
+  ```
+
+---
+
+### B. Retrieve Historical Notifications (GET)
+Fetches chronological in-app alerts for the current session.
+
+* **Endpoint:** `{{base_url}}/notifications`
+* **Method:** `GET`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+* **Parameters (Optional):**
+  * `unreadOnly`: `true`
+
+---
+
+### C. Mark Notification as Read (PATCH)
+Marks a single historical alert document as read.
+
+* **Endpoint:** `{{base_url}}/notifications/:id/read`
+* **Method:** `PATCH`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+
+---
+
+### D. Mark All Notifications as Read (PATCH)
+Marks all pending alerts for the active session as read.
+
+* **Endpoint:** `{{base_url}}/notifications/read-all`
+* **Method:** `PATCH`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+
+---
+
+## 5. Sample Error Responses
 
 You can test validation limits by passing malformed values. The system will reply using standardized envelopes:
 

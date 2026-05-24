@@ -30,6 +30,7 @@ This file serves as a live document to track completed features, pending milesto
 * [x] **Real-time WebSockets:** Established a modular Socket.IO wrapper split into `sockets/index.js` (for bootstrapping) and `sockets/complaint.socket.js` (for managing room subscriptions).
 * [x] **Programmatic Verification Suite:** Designed mock-driven programmatic test suites for both Authentication and Complaints using `supertest` to verify 100% of the API success pathways, role access boundaries, filters, and pagination queries.
 * [x] **Cloudinary Media Storage Uploads:** Fully integrated Multer `memoryStorage` file upload middleware (`uploadArray` for up to 5 images), automatic image optimization streaming to Cloudinary via native Node streams, strict 5MB size validation gates, JPG/PNG/WEBP format filters, Zod preprocessors for multipart textual coordinate conversions, and automated `supertest` mock verification suites.
+* [x] **Firebase FCM Push Notification System:** Fully integrated dynamic credentials boot with mock failsafe fallbacks, multiple device token arrays, Zod token schema validators, multicast push operations, bulk broadcasts to administrators, and automated expired token pruning globally from MongoDB.
 * [x] **Technical Documentation:** Written complete guides for project directories, REST endpoint routes, setup instructions, and Postman reference parameters.
 
 ---
@@ -40,7 +41,7 @@ This file serves as a live document to track completed features, pending milesto
 * [x] **Complete Authentication Module:** Fully integrated credential verification layers, token expiration controls, password encryption, and duplicate checks.
 * [ ] **Google OAuth Sign-in integration** for quicker citizen registration.
 * [x] **Multer Media Storage hookups** with Cloudinary configurations for processing real images uploaded by citizens.
-* [ ] **FCM Push Notification integrations** to trigger standard mobile push alerts when app sockets are offline.
+* [x] **FCM Push Notification integrations** to trigger standard mobile push alerts when app sockets are offline.
 
 ### Phase 3: Analytics & Mapping Engines
 * [ ] **Advanced GeoJSON query channels** (e.g. fetching all complaints within a dynamic polygon or path).

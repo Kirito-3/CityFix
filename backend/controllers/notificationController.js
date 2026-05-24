@@ -68,4 +68,28 @@ export const markAllNotificationsAsRead = asyncHandler(async (req, res) => {
     );
 });
 
-export default { getMyNotifications, markNotificationAsRead, markAllNotificationsAsRead };
+export const registerFCMToken = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  const user = req.user;
+  if (!user.fcmTokens) {
+    user.fcmTokens = [];
+  }
+
+  // Avoid inserting duplicate tokens
+  if (!user.fcmTokens.includes(token)) {
+    user.fcmTokens.push(token);
+    await user.save();
+  }
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, { fcmTokens: user.fcmTokens }, 'FCM token registered successfully.'));
+});
+
+export default { 
+  getMyNotifications, 
+  markNotificationAsRead, 
+  markAllNotificationsAsRead,
+  registerFCMToken
+};

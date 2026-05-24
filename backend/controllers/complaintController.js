@@ -6,6 +6,7 @@ import ApiResponse from '../utils/ApiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { getIO } from '../sockets/index.js';
 import { uploadImageBuffer } from '../services/cloudinaryService.js';
+import { sendComplaintStatusNotification } from '../services/notificationService.js';
 
 /**
  * File a new Civic Issue Complaint.
@@ -222,6 +223,9 @@ export const updateComplaintStatus = asyncHandler(async (req, res) => {
     message: `Your complaint regarding '${complaint.title}' has been moved to ${status}.`,
     type: 'complaint_status',
   });
+
+  // Send Firebase FCM push notification to reporting citizen
+  await sendComplaintStatusNotification(complaint, previousStatus, status);
 
   // Emit websocket events for realtime mobile client / admin board sync
   const io = getIO();

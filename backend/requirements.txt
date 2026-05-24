@@ -26,8 +26,9 @@ This document lists all system requirements, library dependencies, architecture 
 * multer (v1.4.x) - Node.js multipart form-data middleware for processing image/file uploads.
 * cloudinary (v2.2.x) - Native software development kit (SDK) to upload assets to Cloudinary media cloud.
 
-### Realtime Communication
+### Realtime & Push Communication
 * socket.io (v4.7.x) - Client-server bidirectionally coupled event broker framework.
+* firebase-admin (v12.x.x) - Firebase Admin SDK to deliver real-time push notifications.
 
 ### Development Dependencies
 * nodemon (v3.1.x) - Automatic node process reloader watching source code updates.

@@ -188,6 +188,16 @@ This document catalogs all endpoints, parameters, request payloads, and security
 * **Query Parameters:**
   * `unreadOnly`: Set to `true` to return only unread notifications.
 
+#### `POST /notifications/register-token`
+* **Access:** Private (Authenticated users)
+* **Purpose:** Register or update the Firebase Cloud Messaging (FCM) push token for the user's active device. Prevents duplicate token entries.
+* **Payload (JSON):**
+  ```json
+  {
+    "token": "d7-a5BcXyZ1234567890_fcm_device_token_signature_hash"
+  }
+  ```
+
 #### `PATCH /notifications/:id/read`
 * **Access:** Private (Notification recipient)
 * **Purpose:** Mark a single alert as read.
