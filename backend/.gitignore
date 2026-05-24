@@ -22,3 +22,8 @@ uploads/*
 # System files
 .DS_Store
 Thumbs.db
+
+# Firebase Service Account Credentials (NEVER commit to repository)
+config/firebase-service-account.json
+firebase-service-account.json
+*.service-account.json
