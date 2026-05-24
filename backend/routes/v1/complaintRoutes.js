@@ -27,6 +27,6 @@ router.route('/:id').get(getComplaintById);
 
 router
   .route('/:id/status')
-  .patch(restrictTo('admin'), validate(updateComplaintStatusSchema), updateComplaintStatus);
+  .patch(restrictTo('admin', 'authority'), validate(updateComplaintStatusSchema), updateComplaintStatus);
 
 export default router;

@@ -412,9 +412,10 @@ const runTests = async () => {
     const authorityPatchRes = await request(app)
       .patch(`/api/v1/complaints/${testComplaintId}/status`)
       .set('Authorization', `Bearer ${authorityToken}`)
-      .send({ status: 'Resolved' });
+      .send({ status: 'Resolved', remarks: 'Authority resolved the issue.' });
 
-    assert(authorityPatchRes.statusCode === 403, 'Authority status patch is also rejected with 403.');
+    assert(authorityPatchRes.statusCode === 200, 'Authority status patch is allowed and returns 200.');
+    assert(authorityPatchRes.body.data.complaint.status === 'Resolved', 'Complaint status updated to "Resolved" by authority.');
 
     // ------------------------------------------------------------------
     // TEST 10: Validation for status enum options (bad status name)

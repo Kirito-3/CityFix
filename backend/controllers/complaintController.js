@@ -188,8 +188,8 @@ export const getComplaintById = asyncHandler(async (req, res) => {
 export const updateComplaintStatus = asyncHandler(async (req, res) => {
   const { status, remarks } = req.body;
 
-  // STRICT PROTECTION: Enforce that only admins can update status
-  if (req.user.role !== 'admin') {
+  // STRICT PROTECTION: Enforce that only admins/authorities can update status
+  if (req.user.role !== 'admin' && req.user.role !== 'authority') {
     throw new ApiError(403, 'Access forbidden: Only administrators can update complaint statuses.');
   }
 

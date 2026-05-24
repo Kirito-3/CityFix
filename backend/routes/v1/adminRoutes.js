@@ -6,7 +6,7 @@ const router = express.Router();
 
 // All administrative endpoints require authentication and restrict privileges strictly to admin roles
 router.use(protect);
-router.use(restrictTo('admin'));
+router.use(restrictTo('admin', 'authority'));
 
 router.get('/stats', getDashboardStats);
 router.patch('/complaints/:id/assign', assignComplaintAuthority);
