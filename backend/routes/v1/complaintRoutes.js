@@ -7,6 +7,7 @@ import {
 } from '../../controllers/complaintController.js';
 import { protect, restrictTo } from '../../middleware/authMiddleware.js';
 import { validate } from '../../middleware/validateMiddleware.js';
+import { uploadArray } from '../../middleware/uploadMiddleware.js';
 import {
   createComplaintSchema,
   updateComplaintStatusSchema,
@@ -19,7 +20,7 @@ router.use(protect);
 
 router
   .route('/')
-  .post(restrictTo('citizen'), validate(createComplaintSchema), createComplaint)
+  .post(restrictTo('citizen'), uploadArray, validate(createComplaintSchema), createComplaint)
   .get(getComplaints);
 
 router.route('/:id').get(getComplaintById);

@@ -5,6 +5,7 @@ import ApiError from '../utils/ApiError.js';
 import ApiResponse from '../utils/ApiResponse.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { getIO } from '../sockets/index.js';
+import { uploadImageBuffer } from '../services/cloudinaryService.js';
 
 /**
  * File a new Civic Issue Complaint.
@@ -20,6 +21,17 @@ export const createComplaint = asyncHandler(async (req, res) => {
     coordinates: [longitude, latitude], // Note: longitude first, then latitude in GeoJSON
   };
 
+  // Handle file uploads to Cloudinary if files are present in req.files
+  let imageUrls = [];
+  if (req.files && req.files.length > 0) {
+    const uploadPromises = req.files.map(file => uploadImageBuffer(file.buffer));
+    const uploadResults = await Promise.all(uploadPromises);
+    imageUrls = uploadResults.map(result => result.secure_url);
+  } else if (images) {
+    // Fallback support for direct JSON string arrays (backward compatibility)
+    imageUrls = Array.isArray(images) ? images : [images];
+  }
+
   // Create Complaint document
   const complaint = await Complaint.create({
     title,
@@ -28,7 +40,7 @@ export const createComplaint = asyncHandler(async (req, res) => {
     priority: priority || 'medium',
     location,
     address,
-    images: images || [],
+    images: imageUrls,
     citizen: req.user._id,
     status: 'Submitted', // Auto-assign default status = "Submitted"
   });

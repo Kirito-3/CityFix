@@ -20,14 +20,32 @@ export const createComplaintSchema = z.object({
   priority: z.enum(['low', 'medium', 'high'], {
     message: 'Priority must be one of: low, medium, high',
   }).optional().default('medium'),
-  longitude: z
-    .number({ required_error: 'Longitude coordinate is required' })
-    .min(-180, { message: 'Longitude must be between -180 and 180' })
-    .max(180, { message: 'Longitude must be between -180 and 180' }),
-  latitude: z
-    .number({ required_error: 'Latitude coordinate is required' })
-    .min(-90, { message: 'Latitude must be between -90 and 90' })
-    .max(90, { message: 'Latitude must be between -90 and 90' }),
+  longitude: z.preprocess(
+    (val) => {
+      if (typeof val === 'string') {
+        const parsed = parseFloat(val);
+        return isNaN(parsed) ? val : parsed;
+      }
+      return val;
+    },
+    z
+      .number({ required_error: 'Longitude coordinate is required' })
+      .min(-180, { message: 'Longitude must be between -180 and 180' })
+      .max(180, { message: 'Longitude must be between -180 and 180' })
+  ),
+  latitude: z.preprocess(
+    (val) => {
+      if (typeof val === 'string') {
+        const parsed = parseFloat(val);
+        return isNaN(parsed) ? val : parsed;
+      }
+      return val;
+    },
+    z
+      .number({ required_error: 'Latitude coordinate is required' })
+      .min(-90, { message: 'Latitude must be between -90 and 90' })
+      .max(90, { message: 'Latitude must be between -90 and 90' })
+  ),
   address: z
     .string({ required_error: 'Approximate address is required' })
     .min(3, { message: 'Address must be at least 3 characters long' })

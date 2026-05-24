@@ -106,19 +106,32 @@ This document catalogs all endpoints, parameters, request payloads, and security
 #### `POST /complaints`
 * **Access:** Private (Citizens only)
 * **Purpose:** File a new civic issue report.
-* **Payload (JSON):**
-  ```json
-  {
-    "title": "Water pipeline burst",
-    "description": "Clean drinking water is leaking rapidly on Main Street.",
-    "category": "water_leakage", // enum: ['pothole', 'garbage', 'drainage', 'water_leakage', 'streetlight', 'other']
-    "priority": "high", // enum: ['low', 'medium', 'high'], default: 'medium' (Optional)
-    "longitude": 77.5946,
-    "latitude": 12.9716,
-    "address": "12 Main Street, Sector 4",
-    "images": ["https://res.cloudinary.com/demo/image/upload/sample.jpg"] // Optional
-  }
-  ```
+* **Request Formats Supported:**
+  * **Option A: `multipart/form-data` (Recommended for attaching direct photos)**
+    * **File Fields:**
+      * `images`: Binary file buffers. Accepts up to `5` files. File size limit is `5MB` per image. Valid formats: `jpg`, `jpeg`, `png`, `webp`.
+    * **Text Fields:**
+      * `title`: String (5-100 characters), required.
+      * `description`: String (10-1000 characters), required.
+      * `category`: String (enum: `pothole`, `garbage`, `drainage`, `water_leakage`, `streetlight`, `other`), required.
+      * `priority`: String (enum: `low`, `medium`, `high`), default: `medium` (Optional).
+      * `longitude`: String or Number (coordinates format -180 to 180), required.
+      * `latitude`: String or Number (coordinates format -90 to 90), required.
+      * `address`: String (min 3 characters), required.
+  * **Option B: `application/json` (Backward compatible format)**
+    * **Payload (JSON):**
+      ```json
+      {
+        "title": "Water pipeline burst",
+        "description": "Clean drinking water is leaking rapidly on Main Street.",
+        "category": "water_leakage",
+        "priority": "high",
+        "longitude": 77.5946,
+        "latitude": 12.9716,
+        "address": "12 Main Street, Sector 4",
+        "images": ["https://res.cloudinary.com/demo/image/upload/sample.jpg"] // Optional
+      }
+      ```
 
 #### `GET /complaints`
 * **Access:** Private (Citizens see their own reports unless query is geospatial; Admins see all filtered reports)

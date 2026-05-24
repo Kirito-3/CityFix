@@ -102,14 +102,33 @@ Secured endpoint retrieving currently authenticated context using Bearer headers
 Enables citizens to file complaints, and allows admins/authorities to search and manage status lifecycles.
 
 ### A. File a Civic Complaint (POST)
-Filing a new issue as an authenticated citizen.
+Filing a new civic issue report as an authenticated citizen.
 
+#### Option 1: Using `multipart/form-data` (Recommended for attaching direct photos)
+* **Endpoint:** `{{base_url}}/complaints`
+* **Method:** `POST`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+  * *(Omit Content-Type: Postman automatically sets the multipart boundary header)*
+* **Body (`form-data`):**
+  * Key-value configurations (Text fields):
+    * `title`: `Severe Pothole on Market Street` (Text)
+    * `description`: `A very large pothole causing major vehicle damages and traffic slow-down near the bakery.` (Text)
+    * `category`: `pothole` (Text)
+    * `priority`: `high` (Text)
+    * `longitude`: `77.5946` (Text)
+    * `latitude`: `12.9716` (Text)
+    * `address`: `Market Street, Sector 3, Bengaluru` (Text)
+  * Key-value configurations (File fields):
+    * `images`: *(Select `File` type in Postman dropdown and upload one or more JPG/PNG/WEBP images)*
+
+#### Option 2: Using `application/json` (Backward compatible format)
 * **Endpoint:** `{{base_url}}/complaints`
 * **Method:** `POST`
 * **Headers:**
   * `Authorization`: `Bearer {{token}}`
   * `Content-Type`: `application/json`
-* **Body (JSON):**
+* **Body (`raw JSON`):**
   ```json
   {
     "title": "Severe Pothole on Market Street",
