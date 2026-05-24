@@ -16,10 +16,14 @@ lib/
 │   ├── api_client.dart             <-- Dio HTTP engine with JWT header injects and 401 logout handlers.
 │   └── secure_storage_service.dart <-- Hardware Keychain/Keystore secure token manager.
 ├── features/
-│   └── auth/
-│       ├── splash_screen.dart      <-- Logo animations and storage session bootstrap routing.
-│       ├── login_screen.dart       <-- Email/Password validated input forms.
-│       └── signup_screen.dart      <-- Citizen profile registration input forms.
+│   ├── auth/
+│   │   ├── splash_screen.dart      <-- Logo animations and storage session bootstrap routing.
+│   │   ├── login_screen.dart       <-- Email/Password validated input forms.
+│   │   └── signup_screen.dart      <-- Citizen profile registration input forms.
+│   ├── dashboard/
+│   │   └── dashboard_screen.dart   <-- Stats, active reports grid, and new report trigger.
+│   └── complaints/
+│       └── report_issue_screen.dart <-- Coordinates GPS locks, picker thumbnails, map markers, and Dio upload progress.
 ├── models/
 │   ├── complaint_model.dart        <-- Deserializes civic complaints, GeoJSON points, and StatusLog timeline logs.
 │   └── user_model.dart             <-- Deserializes citizen user profiles.

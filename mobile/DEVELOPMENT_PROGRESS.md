@@ -38,15 +38,11 @@ This progress tracker logs completed architectural milestones, starter features,
 
 ## 3. Next Implementation Steps (Recommended Roadmap)
 
-### Phase 2: Dashboard & Map Feed
-1. **Google Maps Feed Integration:** Render the live Map view showing current user location using `Geolocator`.
-2. **Interactive Map Pins:** Fetch nearby complaints (`GET /complaints?lat=...&lng=...`) and place custom color-coded map markers reflecting category or status.
-3. **Dashboard Filters:** Render dynamic filter chips allowing citizens to filter lists by category (`pothole`, `garbage`, `drainage`) or priority.
-
-### Phase 3: Camera Uploads & Complaint Filing
-1. **Camera Image Selection:** Connect `image_picker` to the "File a Complaint" form to let users pick photos from their gallery or shoot live photos.
-2. **Geo-tagging Automation:** Leverage Geolocator to pre-populate the exact latitude and longitude on the filing form the moment a photo is captured.
-3. **Multipart Filing post:** Bind form submits to `ref.read(complaintProvider.notifier).createComplaint(...)` to upload images directly to Cloudinary and register status log timelines.
+### Phase 2 & 3: Citizen Dashboard & Complaint Filing (Completed!)
+* [x] **Citizen Dashboard (`features/dashboard/dashboard_screen.dart`):** Added dynamic user greetings, calculated pending/resolved/total statistics cards, reactively listed individual citizen reports in a premium list view with status/priority tags, and added FAB navigation.
+* [x] **Complaint Reporting Screen (`features/complaints/report_issue_screen.dart`):** Implemented a production-ready filing form with Title/Description validations, Category and Priority themed dropdowns, Camera and Gallery pickers with thumbnail preview deletion indicators, Geolocator GPS lock permissions with Windows desktop fallback mock coordinates, Google Maps coordinates pin marking, and full transparent uploading spin overlays communicating with `complaintProvider` multipart Dio posting.
 
 ### Phase 4: History Timeline Details
 1. **History Timeline Logs View:** Build a vertical chronological stepper on the complaint detail page, showing status transitions (e.g., from `Submitted` to `Under Review` to `Resolved`) with admin remarks.
+2. **Maps Feed Overlay Integration:** Build an interactive maps feed on the dashboard showcasing all nearby complaints matching latitude and longitude boundaries using color-coded marker category pins.
+3. **Advanced Filters & Search**: Add search/filter capabilities to quickly isolate issues by tags (e.g., pothole only, high priority).

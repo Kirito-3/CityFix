@@ -1,8 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Permissions for GPS Location Tracking -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <!-- Permission for Camera Uploads -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:label="cityfix_mobile"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        
+        <!-- 
+          Google Maps API Key Configuration
+          Securely injected via Gradle manifestPlaceholders from local.properties.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${mapsApiKey}" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
