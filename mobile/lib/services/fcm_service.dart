@@ -12,8 +12,18 @@ class FcmService {
   FcmService._internal();
   static final FcmService instance = FcmService._internal();
 
-  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   bool _isInitialized = false;
+
+  // Safe getter to prevent crashes on unsupported platforms (like Windows/Desktop) 
+  // or when Firebase is not yet initialized.
+  FirebaseMessaging? get _messaging {
+    try {
+      if (Firebase.apps.isEmpty) return null;
+      return FirebaseMessaging.instance;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /**
    * Initializes FCM push hooks and registers active device tokens with the backend
@@ -24,9 +34,15 @@ class FcmService {
   Future<void> initialize(BuildContext context, WidgetRef ref) async {
     if (_isInitialized) return;
 
+    final messaging = _messaging;
+    if (messaging == null) {
+      debugPrint('FCM is not supported or Firebase has not been initialized on this platform. Bypassing push notification setup.');
+      return;
+    }
+
     try {
       // 1. Request OS native notifications delivery permissions
-      NotificationSettings settings = await _messaging.requestPermission(
+      NotificationSettings settings = await messaging.requestPermission(
         alert: true,
         badge: true,
         sound: true,
@@ -37,7 +53,7 @@ class FcmService {
         debugPrint('FCM user successfully authorized push alerts permission.');
 
         // 2. Fetch unique device registration token
-        final fcmToken = await _messaging.getToken();
+        final fcmToken = await messaging.getToken();
         if (fcmToken != null) {
           debugPrint('FCM device token successfully loaded: $fcmToken');
           

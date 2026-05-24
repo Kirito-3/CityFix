@@ -33,8 +33,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerPr
 
     // 2. Perform secure storage session credentials bootstrap after frame rendering
     Future.microtask(() async {
-      // Bootstrap secure storage token reads
-      await ref.read(authProvider.notifier).bootstrapSession();
+      try {
+        // Bootstrap secure storage token reads
+        await ref.read(authProvider.notifier).bootstrapSession();
+      } catch (e) {
+        debugPrint('Session bootstrap encountered a non-fatal error: $e');
+      }
 
       // Ensure intro animation displays at least 2.5 seconds for premium user experience
       await Future.delayed(const Duration(milliseconds: 2500));

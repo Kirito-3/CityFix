@@ -50,6 +50,9 @@ app.use('/api', apiLimiter);
 // Routing Configurations
 // ---------------------------------------------------------
 
+// Favicon bypass to avoid noisy 404 browser logs
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Base Welcome Route
 app.get('/', (req, res) => {
   res.status(200).json(

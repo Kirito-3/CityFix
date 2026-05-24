@@ -71,7 +71,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     } catch (e) {
       // Gracefully handle boot connection failures
-      await SecureStorageService.instance.deleteToken();
+      try {
+        await SecureStorageService.instance.deleteToken();
+      } catch (_) {}
       state = AuthState();
     }
   }

@@ -51,7 +51,8 @@ class ApiClient {
   Dio get client => _dio;
 
   // Local development address pointing to 10.0.2.2 (which maps to localhost on Android emulator)
-  static const String baseUrl = 'http://10.0.2.2:5000/api/v1';
+  //static const String baseUrl = 'http://10.0.2.2:5000/api/v1';
+  static const String baseUrl = 'http://127.0.0.1:5000/api/v1';
 
   // Global Session Eviction Callback broker registered by Auth Notifier
   static Function()? onUnauthorized;

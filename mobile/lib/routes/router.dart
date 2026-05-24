@@ -58,15 +58,36 @@ class DashboardScreen extends ConsumerWidget {
 }
 
 /**
+ * Custom ChangeNotifier wrapper that listens to Riverpod auth provider changes.
+ * This triggers GoRouter's redirect logic without reconstructing the router.
+ */
+class RouterNotifier extends ChangeNotifier {
+  final Ref _ref;
+
+  RouterNotifier(this._ref) {
+    // Listens to the authProvider state and notifies GoRouter if the login status transitions
+    _ref.listen(
+      authProvider,
+      (previous, next) {
+        if (previous?.isAuthenticated != next.isAuthenticated) {
+          notifyListeners();
+        }
+      },
+    );
+  }
+}
+
+/**
  * Global GoRouter State Provider enabling clean, reactive, and protected routing.
  */
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final notifier = RouterNotifier(ref);
 
   return GoRouter(
     initialLocation: '/',
+    refreshListenable: notifier,
     redirect: (context, state) {
-      final isLoggedIn = authState.isAuthenticated;
+      final isLoggedIn = ref.read(authProvider).isAuthenticated;
       final isGoingToAuth = state.matchedLocation == '/login' || state.matchedLocation == '/signup';
       final isGoingToSplash = state.matchedLocation == '/';
 

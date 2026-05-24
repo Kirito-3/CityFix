@@ -197,8 +197,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   const SizedBox(height: 24),
 
                   // Redirect to Login
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
                     children: [
                       Text(
                         'Already registered as a citizen?',
@@ -209,6 +211,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       ),
                       TextButton(
                         onPressed: () => context.go('/login'),
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: const Size(0, 0),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                         child: const Text(
                           'Sign In',
                           style: TextStyle(
