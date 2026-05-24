@@ -17,6 +17,9 @@ export const createComplaintSchema = z.object({
   category: z.enum(['pothole', 'garbage', 'drainage', 'water_leakage', 'streetlight', 'other'], {
     message: 'Category must be one of: pothole, garbage, drainage, water_leakage, streetlight, other',
   }),
+  priority: z.enum(['low', 'medium', 'high'], {
+    message: 'Priority must be one of: low, medium, high',
+  }).optional().default('medium'),
   longitude: z
     .number({ required_error: 'Longitude coordinate is required' })
     .min(-180, { message: 'Longitude must be between -180 and 180' })
@@ -36,8 +39,8 @@ export const createComplaintSchema = z.object({
  * Zod validation schema for updating a complaint status (primarily for authority/admin).
  */
 export const updateComplaintStatusSchema = z.object({
-  status: z.enum(['reported', 'under_review', 'resolved'], {
-    message: 'Status must be one of: reported, under_review, resolved',
+  status: z.enum(['Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Rejected'], {
+    message: 'Status must be one of: Submitted, Under Review, Assigned, In Progress, Resolved, Rejected',
   }),
   remarks: z
     .string()

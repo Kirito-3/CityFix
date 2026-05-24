@@ -15,12 +15,12 @@ const statusLogSchema = new mongoose.Schema(
     },
     previousStatus: {
       type: String,
-      enum: ['reported', 'under_review', 'resolved', 'none'],
+      enum: ['Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Rejected', 'none'],
       default: 'none',
     },
     newStatus: {
       type: String,
-      enum: ['reported', 'under_review', 'resolved'],
+      enum: ['Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Rejected'],
       required: [true, 'New status value is required.'],
     },
     remarks: {

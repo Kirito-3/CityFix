@@ -25,8 +25,10 @@ This file serves as a live document to track completed features, pending milesto
   * Created `Notification` schema.
 * [x] **API v1 Module Routing:** Set up authentication routes (`/auth`), complaints routes (`/complaints`), administrator dashboard routes (`/admin`), and alert routes (`/notifications`).
 * [x] **Authentication Module Completeness:** Fully implemented signup (`POST /signup`), login (`POST /login`), getMe (`GET /me`), custom Zod checks, email/phone uniqueness validations, and verified logic using programmatic integration scripts.
+* [x] **Complaint Management Module Completeness:** Fully implemented complaint filings (`POST /complaints`), role-based routing lists (`GET /complaints` with pagination, filters, and proximity queries), detail queries (`GET /complaints/:id`), administrative status updates (`PATCH /complaints/:id/status` restricted strictly to Admin role), and comprehensive database timeline tracking (`StatusLog` collection).
 * [x] **Express & Server Integration:** Programmed `app.js` and `server.js` and separated execution routines for easier automated endpoint testing.
 * [x] **Real-time WebSockets:** Established a modular Socket.IO wrapper split into `sockets/index.js` (for bootstrapping) and `sockets/complaint.socket.js` (for managing room subscriptions).
+* [x] **Programmatic Verification Suite:** Designed mock-driven programmatic test suites for both Authentication and Complaints using `supertest` to verify 100% of the API success pathways, role access boundaries, filters, and pagination queries.
 * [x] **Technical Documentation:** Written complete guides for project directories, REST endpoint routes, setup instructions, and Postman reference parameters.
 
 ---

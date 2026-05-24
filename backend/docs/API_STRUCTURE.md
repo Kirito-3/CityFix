@@ -112,6 +112,7 @@ This document catalogs all endpoints, parameters, request payloads, and security
     "title": "Water pipeline burst",
     "description": "Clean drinking water is leaking rapidly on Main Street.",
     "category": "water_leakage", // enum: ['pothole', 'garbage', 'drainage', 'water_leakage', 'streetlight', 'other']
+    "priority": "high", // enum: ['low', 'medium', 'high'], default: 'medium' (Optional)
     "longitude": 77.5946,
     "latitude": 12.9716,
     "address": "12 Main Street, Sector 4",
@@ -120,25 +121,28 @@ This document catalogs all endpoints, parameters, request payloads, and security
   ```
 
 #### `GET /complaints`
-* **Access:** Private (Citizens see their own reports; Authorities and Admins see all filtered reports)
-* **Purpose:** Query complaints list.
+* **Access:** Private (Citizens see their own reports unless query is geospatial; Admins see all filtered reports)
+* **Purpose:** Query complaints list with pagination, sorting, and filtration.
 * **Query Parameters:**
-  * `status`: Filter by state (`reported`, `under_review`, `resolved`)
+  * `status`: Filter by state (`Submitted`, `Under Review`, `Assigned`, `In Progress`, `Resolved`, `Rejected`)
   * `category`: Filter by category
+  * `priority`: Filter by priority (`low`, `medium`, `high`)
+  * `page`: Page index (default: `1`)
+  * `limit`: Page count (default: `10`)
   * `lat` & `lng`: Triggers geospatial search. Requires both coordinate parameters to return complaints ordered by proximity.
   * `distance`: Search radius limit in meters (default: `5000` = 5km)
 
 #### `GET /complaints/:id`
 * **Access:** Private (Reporting Citizen, assigned Authority, or Admin)
-* **Purpose:** Retrieve complaint details along with the full status timeline logs.
+* **Purpose:** Retrieve complaint details along with the full status timeline logs showing chronological transitions (`StatusLog` collection).
 
 #### `PATCH /complaints/:id/status`
-* **Access:** Private (Admin and Authority only)
-* **Purpose:** Update the progress status of an issue.
+* **Access:** Private (Admin only)
+* **Purpose:** Update the progress status of an issue. Every update appends a detailed audit track record inside the `StatusLog` collection and pushes real-time mobile/admin socket updates.
 * **Payload (JSON):**
   ```json
   {
-    "status": "resolved", // enum: ['reported', 'under_review', 'resolved']
+    "status": "Under Review", // enum: ['Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Rejected']
     "remarks": "The pipeline has been patched and road resurfaced." // Optional
   }
   ```

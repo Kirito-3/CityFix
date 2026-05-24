@@ -97,7 +97,82 @@ Secured endpoint retrieving currently authenticated context using Bearer headers
 
 ---
 
-## 3. Sample Error Responses
+## 3. Complaint Management Module Reference
+
+Enables citizens to file complaints, and allows admins/authorities to search and manage status lifecycles.
+
+### A. File a Civic Complaint (POST)
+Filing a new issue as an authenticated citizen.
+
+* **Endpoint:** `{{base_url}}/complaints`
+* **Method:** `POST`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+  * `Content-Type`: `application/json`
+* **Body (JSON):**
+  ```json
+  {
+    "title": "Severe Pothole on Market Street",
+    "description": "A very large pothole causing major vehicle damages and traffic slow-down near the bakery.",
+    "category": "pothole",
+    "priority": "high",
+    "longitude": 77.5946,
+    "latitude": 12.9716,
+    "address": "Market Street, Sector 3, Bengaluru",
+    "images": ["https://res.cloudinary.com/cityfix/image/upload/sample_pothole.jpg"]
+  }
+  ```
+
+---
+
+### B. Retrieve Complaints List (GET)
+Returns paginated, filtered complaints. Citizens see their own; Admins see all.
+
+* **Endpoint:** `{{base_url}}/complaints`
+* **Method:** `GET`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+* **Parameters (Optional):**
+  * `status`: `Submitted`
+  * `category`: `pothole`
+  * `priority`: `high`
+  * `page`: `1`
+  * `limit`: `10`
+  * `lat`: `12.9716`
+  * `lng`: `77.5946`
+  * `distance`: `5000`
+
+---
+
+### C. Retrieve Complaint Detail & History Timeline (GET)
+Fetches chronological StatusLog transitions and detailed complaint fields.
+
+* **Endpoint:** `{{base_url}}/complaints/:id`
+* **Method:** `GET`
+* **Headers:**
+  * `Authorization`: `Bearer {{token}}`
+
+---
+
+### D. Update Complaint Status (PATCH)
+Strictly restricted to Admin role. Changes status, sends realtime socket notifies, and updates reporter timeline log.
+
+* **Endpoint:** `{{base_url}}/complaints/:id/status`
+* **Method:** `PATCH`
+* **Headers:**
+  * `Authorization`: `Bearer {{admin_token}}`
+  * `Content-Type`: `application/json`
+* **Body (JSON):**
+  ```json
+  {
+    "status": "In Progress",
+    "remarks": "Assigned road engineering team to fill the pothole."
+  }
+  ```
+
+---
+
+## 4. Sample Error Responses
 
 You can test validation limits by passing malformed values. The system will reply using standardized envelopes:
 

@@ -12,7 +12,7 @@ import { getIO } from '../sockets/index.js';
  * Access: Private (Citizen only)
  */
 export const createComplaint = asyncHandler(async (req, res) => {
-  const { title, description, category, longitude, latitude, address, images } = req.body;
+  const { title, description, category, priority, longitude, latitude, address, images } = req.body;
 
   // Format GeoJSON structure
   const location = {
@@ -25,10 +25,12 @@ export const createComplaint = asyncHandler(async (req, res) => {
     title,
     description,
     category,
+    priority: priority || 'medium',
     location,
     address,
     images: images || [],
     citizen: req.user._id,
+    status: 'Submitted', // Auto-assign default status = "Submitted"
   });
 
   if (!complaint) {
@@ -40,7 +42,7 @@ export const createComplaint = asyncHandler(async (req, res) => {
     complaint: complaint._id,
     changedBy: req.user._id,
     previousStatus: 'none',
-    newStatus: 'reported',
+    newStatus: 'Submitted',
     remarks: 'Complaint filed and registered successfully.',
   });
 
@@ -51,6 +53,7 @@ export const createComplaint = asyncHandler(async (req, res) => {
       complaintId: complaint._id,
       title: complaint.title,
       category: complaint.category,
+      priority: complaint.priority,
       coordinates: location.coordinates,
     });
   }
@@ -61,17 +64,18 @@ export const createComplaint = asyncHandler(async (req, res) => {
 });
 
 /**
- * Retrieve list of all complaints with filters (status, category, geo-proximity).
+ * Retrieve list of all complaints with filters (status, category, priority, geo-proximity) and pagination.
  * Route: GET /api/v1/complaints
  * Access: Private
  */
 export const getComplaints = asyncHandler(async (req, res) => {
-  const { status, category, lat, lng, distance = 5000 } = req.query; // distance in meters, default 5km
+  const { status, category, priority, page = 1, limit = 10, lat, lng, distance = 5000 } = req.query;
   const query = {};
 
-  // Standard filters
+  // Apply filters
   if (status) query.status = status;
   if (category) query.category = category;
+  if (priority) query.priority = priority;
 
   // Geospatial filtering (Radius-based querying via 2dsphere index)
   if (lat && lng) {
@@ -93,27 +97,51 @@ export const getComplaints = asyncHandler(async (req, res) => {
     };
   }
 
-  // For Citizens, only return their own complaints unless searching near coords
+  // Role restriction: Citizens see only their own complaints unless a geospatial proximity query is triggered
   if (req.user.role === 'citizen' && !(lat && lng)) {
     query.citizen = req.user._id;
   }
 
-  const complaints = await Complaint.find(query)
-    .populate('citizen', 'name email phone profilePicture')
-    .populate('assignedAuthority', 'name email phone')
-    .sort({ createdAt: -1 });
+  // Calculate pagination parameters
+  const pageNum = parseInt(page, 10) || 1;
+  const limitNum = parseInt(limit, 10) || 10;
+  const skip = (pageNum - 1) * limitNum;
 
-  res.status(200).json(new ApiResponse(200, complaints, 'Complaints list retrieved successfully.'));
+  // Query database counts
+  const totalCount = await Complaint.countDocuments(query);
+
+  const complaints = await Complaint.find(query)
+    .populate('citizen', 'name email phone profilePicture role')
+    .populate('assignedAuthority', 'name email phone')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limitNum);
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        complaints,
+        pagination: {
+          totalCount,
+          page: pageNum,
+          limit: limitNum,
+          totalPages: Math.ceil(totalCount / limitNum),
+        },
+      },
+      'Complaints list retrieved successfully.'
+    )
+  );
 });
 
 /**
- * Retrieve individual Complaint detail with status transition history timeline.
+ * Retrieve individual Complaint detail with status transition history timeline and reporter details.
  * Route: GET /api/v1/complaints/:id
  * Access: Private
  */
 export const getComplaintById = asyncHandler(async (req, res) => {
   const complaint = await Complaint.findById(req.params.id)
-    .populate('citizen', 'name email phone profilePicture')
+    .populate('citizen', 'name email phone profilePicture role')
     .populate('assignedAuthority', 'name email phone');
 
   if (!complaint) {
@@ -125,7 +153,7 @@ export const getComplaintById = asyncHandler(async (req, res) => {
     throw new ApiError(403, 'Forbidden access: You are not authorized to view this complaint.');
   }
 
-  // Retrieve StatusLog changes history timeline
+  // Retrieve StatusLog changes history timeline populated with admin details
   const timeline = await StatusLog.find({ complaint: complaint._id })
     .populate('changedBy', 'name role')
     .sort({ createdAt: 1 });
@@ -142,10 +170,15 @@ export const getComplaintById = asyncHandler(async (req, res) => {
 /**
  * Update Complaint status and document transition in timeline history.
  * Route: PATCH /api/v1/complaints/:id/status
- * Access: Private (Admin & Authority only)
+ * Access: Private (Admin strictly)
  */
 export const updateComplaintStatus = asyncHandler(async (req, res) => {
   const { status, remarks } = req.body;
+
+  // STRICT PROTECTION: Enforce that only admins can update status
+  if (req.user.role !== 'admin') {
+    throw new ApiError(403, 'Access forbidden: Only administrators can update complaint statuses.');
+  }
 
   const complaint = await Complaint.findById(req.params.id);
   if (!complaint) {
@@ -164,7 +197,7 @@ export const updateComplaintStatus = asyncHandler(async (req, res) => {
   // Record status transition in timeline statuslog collection
   const log = await StatusLog.create({
     complaint: complaint._id,
-    changedBy: req.user._id,
+    changedBy: req.user._id, // admin ID
     previousStatus,
     newStatus: status,
     remarks: remarks || `Complaint status updated from ${previousStatus} to ${status}.`,
@@ -174,7 +207,7 @@ export const updateComplaintStatus = asyncHandler(async (req, res) => {
   const notification = await Notification.create({
     recipient: complaint.citizen,
     title: `Complaint Status Update`,
-    message: `Your complaint regarding '${complaint.title}' has been moved to ${status.replace('_', ' ')}.`,
+    message: `Your complaint regarding '${complaint.title}' has been moved to ${status}.`,
     type: 'complaint_status',
   });
 
@@ -190,7 +223,16 @@ export const updateComplaintStatus = asyncHandler(async (req, res) => {
       updatedAt: log.createdAt,
     });
 
-    // Notify citizens listening in their private room
+    // Notify admin dashboard listeners
+    io.to('admin_room').emit('complaint_status_updated', {
+      complaintId: complaint._id,
+      previousStatus,
+      newStatus: status,
+      remarks: log.remarks,
+      updatedAt: log.createdAt,
+    });
+
+    // Notify citizens private room
     io.to(`user_${complaint.citizen}`).emit('notification_received', {
       id: notification._id,
       title: notification.title,
