@@ -1,5 +1,5 @@
 import express from 'express';
-import { getDashboardStats, assignComplaintAuthority } from '../../controllers/adminController.js';
+import { getDashboardStats, assignComplaintAuthority, getAuthorities } from '../../controllers/adminController.js';
 import { protect, restrictTo } from '../../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -9,6 +9,7 @@ router.use(protect);
 router.use(restrictTo('admin', 'authority'));
 
 router.get('/stats', getDashboardStats);
+router.get('/authorities', getAuthorities);
 router.patch('/complaints/:id/assign', assignComplaintAuthority);
 
 export default router;

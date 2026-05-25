@@ -19,9 +19,15 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
   const totalAuthorities = await User.countDocuments({ role: 'authority' });
 
   const totalComplaints = await Complaint.countDocuments();
-  const reportedComplaints = await Complaint.countDocuments({ status: 'reported' });
-  const underReviewComplaints = await Complaint.countDocuments({ status: 'under_review' });
-  const resolvedComplaints = await Complaint.countDocuments({ status: 'resolved' });
+
+  // NOTE: Status values must match exact strings stored by complaintController.js
+  // ('Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Rejected')
+  const submittedComplaints = await Complaint.countDocuments({ status: 'Submitted' });
+  const underReviewComplaints = await Complaint.countDocuments({ status: 'Under Review' });
+  const assignedComplaints = await Complaint.countDocuments({ status: 'Assigned' });
+  const inProgressComplaints = await Complaint.countDocuments({ status: 'In Progress' });
+  const resolvedComplaints = await Complaint.countDocuments({ status: 'Resolved' });
+  const rejectedComplaints = await Complaint.countDocuments({ status: 'Rejected' });
 
   // Group complaints by category using MongoDB aggregations
   const categoryStats = await Complaint.aggregate([
@@ -51,9 +57,12 @@ export const getDashboardStats = asyncHandler(async (req, res) => {
         },
         complaints: {
           total: totalComplaints,
-          reported: reportedComplaints,
+          reported: submittedComplaints,
           underReview: underReviewComplaints,
+          assigned: assignedComplaints,
+          inProgress: inProgressComplaints,
           resolved: resolvedComplaints,
+          rejected: rejectedComplaints,
         },
         categories: categoryStats,
       },
@@ -162,4 +171,20 @@ export const assignComplaintAuthority = asyncHandler(async (req, res) => {
   );
 });
 
-export default { getDashboardStats, assignComplaintAuthority };
+/**
+ * Retrieve registered department authorities directory.
+ * Route: GET /api/v1/admin/authorities
+ * Access: Private (Admin and Authority only)
+ */
+export const getAuthorities = asyncHandler(async (req, res) => {
+  const authorities = await User.find({ role: 'authority' }).select('name email phone profilePicture role');
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      authorities,
+      'Department authorities list retrieved successfully.'
+    )
+  );
+});
+
+export default { getDashboardStats, assignComplaintAuthority, getAuthorities };

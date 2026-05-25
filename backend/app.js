@@ -24,9 +24,20 @@ export const app = express();
 app.use(helmet());
 
 // 2. Cross-Origin Resource Sharing
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map(o => o.trim())
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, Postman, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS: Origin ${origin} is not allowed.`), false);
+    },
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
     credentials: true,
   })
