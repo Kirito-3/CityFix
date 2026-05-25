@@ -119,3 +119,41 @@ We have fully finalized the **Notification Center and Live Push alert systems**!
 3. You will receive a native push notification banner at the top of your phone screen.
 4. **Click the push banner.** The app will open and immediately direct you to the corresponding complaint's timeline detail screen!
 
+---
+
+## 6. Milestone E: Interactive Nearby Maps Feed & Dynamic Marker Sync
+
+We have fully finalized the **Geospatial Map Feed and custom Marker UX**! Follow these instructions to test these features:
+
+### 📍 Phase 1: Location Bootstrapper and Dynamic Boundaries
+1. Open the app and log in. On the Dashboard, you will now see a **Map Icon** inside the AppBar Actions.
+2. Tap the **Map Icon**. The **Nearby Incident Feed Screen** will open.
+3. The map dynamically requests location permissions, zooms, and centers on your exact GPS coordinates!
+4. **Change Search Parameters**: Tap different horizontal floating radius pills (e.g. **1km**, **3km**, **5km**) or category chips (e.g. *Waste*, *Roads*). The map instantly triggers geodetic fetches and updates pins!
+5. **Pan/Zoom Throttler**: Scroll or pan the map. The map uses a built-in 600ms pan debouncer to automatically fetch fresh complaints matching the new camera center without flooding the Express REST API!
+
+### 📍 Phase 2: Animated Preview Overlay Card
+1. Tap on any colored marker pin on the map.
+2. **Observe Bottom Slide-up Sheet:** An interactive overlay card slides up instantly from the bottom of the map, displaying a preview image, category tags, priority tags, and a summary.
+3. **Timeline Deep-link Navigation:** Tap the **`View Timeline Stepper ➜`** button. The app transitions cleanly to the full vertical timeline audit stepper!
+4. Tap anywhere on the blank map background to slide down and hide the preview card.
+
+### 📍 Phase 3: WebSockets Live Pin Color Sync
+1. Open the Map Feed screen and tap a marker pin to display the bottom preview card. Note the marker color and status (e.g. a Violet pin for *Under Review*).
+2. Keep this map screen open.
+3. **Trigger PC Status Update**: Open your PC REST client and patch the status of this specific complaint:
+   
+   **HTTP PATCH**: `http://localhost:5000/api/v1/complaints/YOUR_COMPLAINT_ID/status`  
+   **Body**:
+   ```json
+   {
+     "status": "In Progress",
+     "remarks": "Technician has arrived at location."
+   }
+   ```
+4. **Observe Phone Live**:
+   - The map pin immediately changes colors! It shifts from a Violet pin to an Orange pin representing **In Progress**!
+   - The status text inside the floating preview card updates immediately in-memory!
+   - **Zero refreshes or screen rebuilds!**
+
+

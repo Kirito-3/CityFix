@@ -47,9 +47,11 @@ This progress tracker logs completed architectural milestones, starter features,
 * [x] **Socket.IO Real-Time Syncing (`services/socket_service.dart` & `providers/realtime_provider.dart`):** Structured instant WebSocket synchronization. Listens to citizen alerts in private rooms to launch app-wide notification toasts and detail updates in real-time rooms.
 * [x] **Notification Center Screen (`features/notifications/notification_center_screen.dart`):** Integrated paginated list notifications index showcasing read/unread unread visual dot marks and unread counters badge overlays inside Dashboard's Bell appbar.
 * [x] **FCM Live Push Notification UX:** Housed foreground, background, and cold start terminated click actions. Leveraged `pushEventProvider` to trigger reactive GoRouter pushes safely redirecting citizens directly to timelines.
+* [x] **Maps Feed Overlay Integration (`features/complaints/nearby_map_screen.dart`):** Structured full `google_maps_flutter` coordinate grid. Features dynamic category ChoiceChips, floating search radius pills (1km, 3km, 5km), throttled pan camera updates, interactive bottom slide-up preview cards, Socket.IO live marker hue state switches, and an interactive visual Windows PC compat fallback dashboard.
 
-### Phase 6: Additional Extensions (Recommended Roadmap)
-1. **Maps Feed Overlay Integration:** Build an interactive maps feed showcasing all nearby complaints matching latitude and longitude boundaries using color-coded marker category pins.
-2. **Citizen Profile Customization:** Let citizens edit their profile pictures, change passwords, and configure push notifications.
+### Phase 7: Additional Extensions (Recommended Roadmap)
+1. **Citizen Profile Customization:** Let citizens edit their profile pictures, change passwords, and configure push notifications.
+2. **Dashboard Visual Graphs:** Integrate interactive visual charts and category distribution metrics charts inside the dashboard greeting sheets.
+
 
 

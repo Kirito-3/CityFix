@@ -25,7 +25,8 @@ lib/
 │   ├── complaints/
 │   │   ├── report_issue_screen.dart <-- Coordinates GPS locks, picker thumbnails, map markers, and Dio upload progress.
 │   │   ├── complaint_history_screen.dart <-- Lists, filters, and paginates civic reports with pull-to-refresh.
-│   │   └── complaint_detail_screen.dart <-- Shows image slide shows, GPS fallback maps, and real-time vertical steppers.
+│   │   ├── complaint_detail_screen.dart <-- Shows image slide shows, GPS fallback maps, and real-time vertical steppers.
+│   │   └── nearby_map_screen.dart   <-- [NEW] Interactive maps feed exhibiting pins coordinates and radius metrics.
 │   └── notifications/
 │       └── notification_center_screen.dart <-- [NEW] Lists warnings and status logs chronologically with unread tags.
 ├── models/
@@ -40,7 +41,10 @@ lib/
 │   ├── realtime_provider.dart      <-- Syncs with Socket.IO users rooms and streams global alerts overlays.
 │   ├── notification_center_provider.dart <-- [NEW] Retreives and patches notification alerts feeds.
 │   ├── unread_count_provider.dart  <-- [NEW] Derived unread count calculator.
-│   └── push_event_provider.dart    <-- [NEW] Triggers reactive routing shifts upon push banner clicks.
+│   ├── push_event_provider.dart    <-- [NEW] Triggers reactive routing shifts upon push banner clicks.
+│   ├── live_map_state_provider.dart <-- [NEW] Encapsulates coordinates search radius and categories settings.
+│   ├── nearby_complaints_provider.dart <-- [NEW] Loads radius-based complaints and syncs real-time events.
+│   └── map_marker_provider.dart     <-- [NEW] Translates complaints list into colored maps markers.
 ├── routes/
 │   └── router.dart                 <-- Configures GoRouter path registries and auth guards redirects.
 ├── services/
@@ -120,4 +124,15 @@ To enable an instant reactive civic experience, the application orchestrates a d
 * **`SocketService` Gateway:** Intercepts WebSocket handshakes securely by passing the authenticated JWT in the connection payload. Establishes robust auto-reconnect configurations.
 * **`realtimeProvider` Orchestrator:** Reactively responds to `authProvider` lifecycle changes. Bootstraps connections upon citizen logins and subscribes them to their private room `user_${userId}` to display instant app-wide Material notifications.
 * **`complaintDetailProvider` Live Timeline Sync:** Subscribes to the specific room `complaint_${id}` when details sheet is active. Dynamically catches status transitions (`status_changed`) and assignments (`authority_assigned`), inserting them in-memory to update the timeline stepper instantly with zero database query overhead.
+
+---
+
+## 6. Interactive Nearby Maps Feed Subsystem
+
+To supply a premium geographic civic reporting grid, the map layout integrates specialized state loops:
+* **Dynamic Camera Pan Throttling:** Camera movements center geodetic coordinate updates inside `liveMapStateProvider`. Updates are debounced by 600ms to prevent REST server floods.
+* **Geospatial API Mapping:** Calls `GET /complaints` passing camera lat/lng and selected radius (translated from UI pill lists like 1km, 3km, 5km into distance meters) to query the database sphere index.
+* **Derived Pin Builders:** `mapMarkerProvider` parses geodetic complaint records into Google Maps `Marker` sets. Translates category types and statuses into distinct color markers (hueBlue for Submitted, hueGreen for Resolved, etc.).
+* **Preview Card Overlays:** Tapping a marker inserts the complaint in `selectedMapComplaintProvider`. The UI reactively slides up an animated overlay card at the bottom displaying a preview, with a deep-link action guiding users directly into timeline logs.
+
 

@@ -9,6 +9,7 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/complaints/report_issue_screen.dart';
 import '../features/complaints/complaint_history_screen.dart';
 import '../features/complaints/complaint_detail_screen.dart';
+import '../features/complaints/nearby_map_screen.dart';
 import '../features/notifications/notification_center_screen.dart';
 import '../providers/auth_provider.dart';
 
@@ -98,6 +99,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationCenterScreen(),
+      ),
+      GoRoute(
+        path: '/nearby',
+        builder: (context, state) => const NearbyComplaintsMapScreen(),
       ),
     ],
   );

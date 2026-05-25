@@ -68,6 +68,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ),
         actions: [
           IconButton(
+            icon: const Icon(Icons.map_outlined),
+            tooltip: 'Nearby Map Feed',
+            onPressed: () {
+              context.push('/nearby');
+            },
+          ),
+          IconButton(
             icon: Stack(
               clipBehavior: Clip.none,
               children: [
