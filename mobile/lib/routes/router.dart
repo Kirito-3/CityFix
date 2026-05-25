@@ -7,6 +7,8 @@ import '../features/auth/login_screen.dart';
 import '../features/auth/signup_screen.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/complaints/report_issue_screen.dart';
+import '../features/complaints/complaint_history_screen.dart';
+import '../features/complaints/complaint_detail_screen.dart';
 import '../providers/auth_provider.dart';
 
 /**
@@ -81,6 +83,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/report',
         builder: (context, state) => const ReportIssueScreen(),
       ),
+      GoRoute(
+        path: '/history',
+        builder: (context, state) => const ComplaintHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/complaints/:id',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? '';
+          return ComplaintDetailScreen(complaintId: id);
+        },
+      ),
     ],
   );
 });
+

@@ -141,13 +141,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                     ),
                     if (complaintState.complaints.isNotEmpty)
-                      Text(
-                        '${complaintState.complaints.length} Items',
-                        style: const TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 12,
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
+                      InkWell(
+                        onTap: () => context.push('/history'),
+                        borderRadius: BorderRadius.circular(4),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'View History',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 12,
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 2),
+                              Icon(Icons.arrow_forward_rounded, size: 12, color: AppColors.accent),
+                            ],
+                          ),
                         ),
                       ),
                   ],
@@ -416,7 +430,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
         onTap: () {
-          // Future timeline extensions path
+          context.push('/complaints/${complaint.id}');
         },
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.md),

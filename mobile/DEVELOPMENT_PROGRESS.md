@@ -38,11 +38,15 @@ This progress tracker logs completed architectural milestones, starter features,
 
 ## 3. Next Implementation Steps (Recommended Roadmap)
 
-### Phase 2 & 3: Citizen Dashboard & Complaint Filing (Completed!)
+### Phase 2, 3, & 4: Citizen Core Operations (Completed!)
 * [x] **Citizen Dashboard (`features/dashboard/dashboard_screen.dart`):** Added dynamic user greetings, calculated pending/resolved/total statistics cards, reactively listed individual citizen reports in a premium list view with status/priority tags, and added FAB navigation.
-* [x] **Complaint Reporting Screen (`features/complaints/report_issue_screen.dart`):** Implemented a production-ready filing form with Title/Description validations, Category and Priority themed dropdowns, Camera and Gallery pickers with thumbnail preview deletion indicators, Geolocator GPS lock permissions with Windows desktop fallback mock coordinates, Google Maps coordinates pin marking, and full transparent uploading spin overlays communicating with `complaintProvider` multipart Dio posting.
+* [x] **Complaint Reporting Screen (`features/complaints/report_issue_screen.dart`):** Implemented a production-ready filing form with coordinates pin marking and full transparent uploading spin overlays.
+* [x] **Complaint History & Filtering (`features/complaints/complaint_history_screen.dart`):** Crafted highly responsive history index. Integrated status, category, and priority choice pills. Connected cursor pagination and pull-to-refresh to `complaintHistoryProvider`.
+* [x] **Complaint Detail Sheet (`features/complaints/complaint_detail_screen.dart`):** Detailed card layouts displaying image slideshow lists, native coordinate map markers, Windows/Web fallback sheets, and citizen/authority metadata values.
+* [x] **Real-Time Chronological Timeline Stepper:** Crafted customized vertical stepper lines displaying status shifts (Submitted ➜ Under Review ➜ Assigned ➜ In Progress ➜ Resolved ➜ Rejected) with active timestamps, role badges, and administrator remarks.
+* [x] **Socket.IO Real-Time Syncing (`services/socket_service.dart` & `providers/realtime_provider.dart`):** Structured instant WebSocket synchronization. Listens to citizen alerts in private rooms to launch app-wide notification toasts and detail updates in real-time rooms.
 
-### Phase 4: History Timeline Details
-1. **History Timeline Logs View:** Build a vertical chronological stepper on the complaint detail page, showing status transitions (e.g., from `Submitted` to `Under Review` to `Resolved`) with admin remarks.
-2. **Maps Feed Overlay Integration:** Build an interactive maps feed on the dashboard showcasing all nearby complaints matching latitude and longitude boundaries using color-coded marker category pins.
-3. **Advanced Filters & Search**: Add search/filter capabilities to quickly isolate issues by tags (e.g., pothole only, high priority).
+### Phase 5: Additional Extensions (Recommended Roadmap)
+1. **Maps Feed Overlay Integration:** Build an interactive maps feed showcasing all nearby complaints matching latitude and longitude boundaries using color-coded marker category pins.
+2. **Citizen Profile Customization:** Let citizens edit their profile pictures, change passwords, and configure push notifications.
+

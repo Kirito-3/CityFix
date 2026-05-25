@@ -23,18 +23,23 @@ lib/
 │   ├── dashboard/
 │   │   └── dashboard_screen.dart   <-- Stats, active reports grid, and new report trigger.
 │   └── complaints/
-│       └── report_issue_screen.dart <-- Coordinates GPS locks, picker thumbnails, map markers, and Dio upload progress.
+│       ├── report_issue_screen.dart <-- Coordinates GPS locks, picker thumbnails, map markers, and Dio upload progress.
+│       ├── complaint_history_screen.dart <-- Lists, filters, and paginates civic reports with pull-to-refresh.
+│       └── complaint_detail_screen.dart <-- Shows image slide shows, GPS fallback maps, and real-time vertical steppers.
 ├── models/
 │   ├── complaint_model.dart        <-- Deserializes civic complaints, GeoJSON points, and StatusLog timeline logs.
 │   └── user_model.dart             <-- Deserializes citizen user profiles.
 ├── providers/
 │   ├── auth_provider.dart          <-- Manages reactive authenticated citizen session states.
 │   ├── complaint_provider.dart     <-- Handles paginated complaint retrieval and multipart file uploads.
-│   └── notification_provider.dart  <-- Posts FCM device tokens to backend API registries.
+│   ├── complaint_history_provider.dart <-- Orchestrates history lists paginations and status/category filters.
+│   ├── complaint_detail_provider.dart  <-- Handles individual details sheets and listens to timeline changes.
+│   └── realtime_provider.dart      <-- Syncs with Socket.IO users rooms and streams global alerts overlays.
 ├── routes/
 │   └── router.dart                 <-- Configures GoRouter path registries and auth guards redirects.
 ├── services/
-│   └── fcm_service.dart            <-- FCM permissions handlers, token logs, and Snackbars overlays.
+│   ├── fcm_service.dart            <-- FCM permissions handlers, token logs, and Snackbars overlays.
+│   └── socket_service.dart         <-- Socket.IO streams broker managing connection state and rooms subscriptions.
 ├── widgets/
 │   └── foundations.dart            <-- Reusable Validated Text Fields, loaders, error boxes, and custom buttons.
 └── main.dart                       <-- Widget binding bootstrapper mounting ProviderScope.
@@ -100,3 +105,13 @@ Consistent styling and standard feedback shapes are backed by custom widgets in 
 * **`CustomTextField`:** Wraps forms and input decors, providing custom icons, validation regexes, and security password show/hide icons.
 * **`CustomButton`:** Features built-in elevated buttons configured with theme parameters. Automatically renders a circular loading indicator when state is loading.
 * **`CustomLoader` / `CustomErrorWidget`:** Standardized full-screen loaders and stylized error cards containing built-in retry callback triggers.
+
+---
+
+## 5. Real-Time Socket.IO Subsystems & Timelines
+
+To enable an instant reactive civic experience, the application orchestrates a dedicated WebSocket layer:
+* **`SocketService` Gateway:** Intercepts WebSocket handshakes securely by passing the authenticated JWT in the connection payload. Establishes robust auto-reconnect configurations.
+* **`realtimeProvider` Orchestrator:** Reactively responds to `authProvider` lifecycle changes. Bootstraps connections upon citizen logins and subscribes them to their private room `user_${userId}` to display instant app-wide Material notifications.
+* **`complaintDetailProvider` Live Timeline Sync:** Subscribes to the specific room `complaint_${id}` when details sheet is active. Dynamically catches status transitions (`status_changed`) and assignments (`authority_assigned`), inserting them in-memory to update the timeline stepper instantly with zero database query overhead.
+
