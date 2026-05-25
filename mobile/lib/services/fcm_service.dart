@@ -2,8 +2,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../providers/notification_provider.dart';
+import '../providers/push_event_provider.dart';
 
 /**
  * Handles Firebase Cloud Messaging (FCM) push notification subscriptions, permissions, and handlers
@@ -71,10 +73,24 @@ class FcmService {
           }
         });
 
-        // 5. Set up background/terminated click handlers
+        // 5. Set up background click handlers
         FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
           debugPrint('FCM Background notification clicked by user: ${message.data}');
-          // In a full production application, route context GoRouter.go('/complaints/${message.data['complaintId']}')
+          final complaintId = message.data['complaintId'] ?? '';
+          if (complaintId.isNotEmpty) {
+            ref.read(pushEventProvider.notifier).triggerNavigation(complaintId);
+          }
+        });
+
+        // 6. Handle cold-start boot initial messages (Terminated state)
+        messaging.getInitialMessage().then((RemoteMessage? message) {
+          if (message != null) {
+            debugPrint('FCM Terminated app launched from push click: ${message.data}');
+            final complaintId = message.data['complaintId'] ?? '';
+            if (complaintId.isNotEmpty) {
+              ref.read(pushEventProvider.notifier).triggerNavigation(complaintId);
+            }
+          }
         });
 
         _isInitialized = true;
@@ -92,6 +108,7 @@ class FcmService {
   void _showInAppNotificationBanner(BuildContext context, RemoteMessage message) {
     final title = message.notification?.title ?? 'CityFix Alert';
     final body = message.notification?.body ?? 'Activity updated.';
+    final complaintId = message.data['complaintId'] ?? '';
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -100,6 +117,15 @@ class FcmService {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         backgroundColor: Colors.indigo.shade900,
         duration: const Duration(seconds: 5),
+        action: complaintId.isNotEmpty
+            ? SnackBarAction(
+                label: 'VIEW',
+                textColor: Colors.amber,
+                onPressed: () {
+                  context.push('/complaints/$complaintId');
+                },
+              )
+            : null,
         content: Row(
           children: [
             const Icon(Icons.notifications_active, color: Colors.amber, size: 28),

@@ -86,3 +86,36 @@ Let's test the active WebSocket synchronization live!
    * The **Status Badge** at the top of the detail sheet changes colors immediately!
 
 Let us know how the real-time timeline looks on your OnePlus 9 screen! 🚀
+
+---
+
+## 5. Milestone D: Notification Center & Live Push Alerts UX
+
+We have fully finalized the **Notification Center and Live Push alert systems**! Follow these instructions to test these features:
+
+### 📍 Phase 1: Foreground Alerts and Reactive Badges
+1. Open the app and log in. You will land on the **Dashboard**.
+2. Notice the **Bell Icon** inside the AppBar Actions deck. If you have no unread notifications, it is completely clean.
+3. Keep the app open in the foreground.
+4. **Trigger Status Change on PC**: Send another PATCH status update request using cURL or your PC REST client.
+5. **Observe the Phone Live**:
+   - An in-app **FCM SnackBar overlay** slides in beautifully from the bottom, accompanied by a pulsing bell icon and a summary of your complaint's new status.
+   - Tap the **`VIEW`** button action on the SnackBar. It will slide you directly into that complaint's detailed timeline screen!
+   - Navigate back to the Dashboard. You will notice that the **Dashboard Bell Icon** now features a red badge representing the incremented unread count!
+
+### 📍 Phase 2: Notification Center List Tiles
+1. Tap the **Bell Icon** on the Dashboard.
+2. The **Notification Center Screen** opens, displaying a clean layout of all logs.
+3. The new alert update shows up as unread with a glowing teal visual mark.
+4. **Mark as Read Sync**: 
+   - Tap **"Read All"** in the AppBar, or simply tap on the specific alert card.
+   - Tap action transitions the card's visual design to a read state instantly.
+   - The unread count badge decreases immediately in real-time!
+   - This state change is automatically recorded in the MongoDB database collections!
+
+### 📍 Phase 3: Background Clicks and Deep-linking Routing
+1. Press the **Home button** on your phone to put the app in the background.
+2. Trigger another status change PATCH from your PC REST client.
+3. You will receive a native push notification banner at the top of your phone screen.
+4. **Click the push banner.** The app will open and immediately direct you to the corresponding complaint's timeline detail screen!
+

@@ -9,6 +9,7 @@ import '../features/dashboard/dashboard_screen.dart';
 import '../features/complaints/report_issue_screen.dart';
 import '../features/complaints/complaint_history_screen.dart';
 import '../features/complaints/complaint_detail_screen.dart';
+import '../features/notifications/notification_center_screen.dart';
 import '../providers/auth_provider.dart';
 
 /**
@@ -93,6 +94,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final id = state.pathParameters['id'] ?? '';
           return ComplaintDetailScreen(complaintId: id);
         },
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationCenterScreen(),
       ),
     ],
   );

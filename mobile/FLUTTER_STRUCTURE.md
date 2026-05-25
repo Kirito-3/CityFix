@@ -22,19 +22,25 @@ lib/
 │   │   └── signup_screen.dart      <-- Citizen profile registration input forms.
 │   ├── dashboard/
 │   │   └── dashboard_screen.dart   <-- Stats, active reports grid, and new report trigger.
-│   └── complaints/
-│       ├── report_issue_screen.dart <-- Coordinates GPS locks, picker thumbnails, map markers, and Dio upload progress.
-│       ├── complaint_history_screen.dart <-- Lists, filters, and paginates civic reports with pull-to-refresh.
-│       └── complaint_detail_screen.dart <-- Shows image slide shows, GPS fallback maps, and real-time vertical steppers.
+│   ├── complaints/
+│   │   ├── report_issue_screen.dart <-- Coordinates GPS locks, picker thumbnails, map markers, and Dio upload progress.
+│   │   ├── complaint_history_screen.dart <-- Lists, filters, and paginates civic reports with pull-to-refresh.
+│   │   └── complaint_detail_screen.dart <-- Shows image slide shows, GPS fallback maps, and real-time vertical steppers.
+│   └── notifications/
+│       └── notification_center_screen.dart <-- [NEW] Lists warnings and status logs chronologically with unread tags.
 ├── models/
 │   ├── complaint_model.dart        <-- Deserializes civic complaints, GeoJSON points, and StatusLog timeline logs.
+│   ├── notification_model.dart     <-- [NEW] Deserializes user alerts, mapping themed icons and dynamic colors.
 │   └── user_model.dart             <-- Deserializes citizen user profiles.
 ├── providers/
 │   ├── auth_provider.dart          <-- Manages reactive authenticated citizen session states.
 │   ├── complaint_provider.dart     <-- Handles paginated complaint retrieval and multipart file uploads.
 │   ├── complaint_history_provider.dart <-- Orchestrates history lists paginations and status/category filters.
 │   ├── complaint_detail_provider.dart  <-- Handles individual details sheets and listens to timeline changes.
-│   └── realtime_provider.dart      <-- Syncs with Socket.IO users rooms and streams global alerts overlays.
+│   ├── realtime_provider.dart      <-- Syncs with Socket.IO users rooms and streams global alerts overlays.
+│   ├── notification_center_provider.dart <-- [NEW] Retreives and patches notification alerts feeds.
+│   ├── unread_count_provider.dart  <-- [NEW] Derived unread count calculator.
+│   └── push_event_provider.dart    <-- [NEW] Triggers reactive routing shifts upon push banner clicks.
 ├── routes/
 │   └── router.dart                 <-- Configures GoRouter path registries and auth guards redirects.
 ├── services/

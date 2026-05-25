@@ -45,8 +45,11 @@ This progress tracker logs completed architectural milestones, starter features,
 * [x] **Complaint Detail Sheet (`features/complaints/complaint_detail_screen.dart`):** Detailed card layouts displaying image slideshow lists, native coordinate map markers, Windows/Web fallback sheets, and citizen/authority metadata values.
 * [x] **Real-Time Chronological Timeline Stepper:** Crafted customized vertical stepper lines displaying status shifts (Submitted ➜ Under Review ➜ Assigned ➜ In Progress ➜ Resolved ➜ Rejected) with active timestamps, role badges, and administrator remarks.
 * [x] **Socket.IO Real-Time Syncing (`services/socket_service.dart` & `providers/realtime_provider.dart`):** Structured instant WebSocket synchronization. Listens to citizen alerts in private rooms to launch app-wide notification toasts and detail updates in real-time rooms.
+* [x] **Notification Center Screen (`features/notifications/notification_center_screen.dart`):** Integrated paginated list notifications index showcasing read/unread unread visual dot marks and unread counters badge overlays inside Dashboard's Bell appbar.
+* [x] **FCM Live Push Notification UX:** Housed foreground, background, and cold start terminated click actions. Leveraged `pushEventProvider` to trigger reactive GoRouter pushes safely redirecting citizens directly to timelines.
 
-### Phase 5: Additional Extensions (Recommended Roadmap)
+### Phase 6: Additional Extensions (Recommended Roadmap)
 1. **Maps Feed Overlay Integration:** Build an interactive maps feed showcasing all nearby complaints matching latitude and longitude boundaries using color-coded marker category pins.
 2. **Citizen Profile Customization:** Let citizens edit their profile pictures, change passwords, and configure push notifications.
+
 

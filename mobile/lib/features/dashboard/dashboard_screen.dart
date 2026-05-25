@@ -6,6 +6,8 @@ import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/complaint_provider.dart';
+import '../../providers/notification_center_provider.dart';
+import '../../providers/unread_count_provider.dart';
 import '../../widgets/foundations.dart';
 
 /**
@@ -23,9 +25,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    // Dispatch fetch complaints call after widget binding mounts
+    // Dispatch fetch calls after widget binding mounts
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(complaintProvider.notifier).fetchComplaints();
+      ref.read(notificationCenterProvider.notifier).fetchNotifications();
     });
   }
 
@@ -33,6 +36,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final complaintState = ref.watch(complaintProvider);
+    final unreadCount = ref.watch(unreadCountProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     // Calculate quick stats
@@ -63,6 +67,43 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ],
         ),
         actions: [
+          IconButton(
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(Icons.notifications_outlined),
+                if (unreadCount > 0)
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 14,
+                        minHeight: 14,
+                      ),
+                      child: Text(
+                        unreadCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            tooltip: 'Notification Center',
+            onPressed: () {
+              context.push('/notifications');
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.logout_rounded),
             tooltip: 'Logout Session',

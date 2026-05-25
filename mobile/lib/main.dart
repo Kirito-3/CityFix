@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'config/theme.dart';
 import 'routes/router.dart';
 import 'services/fcm_service.dart';
+import 'providers/push_event_provider.dart';
 
 /**
  * Root initialization entry point of CityFix Mobile App client
@@ -54,6 +55,16 @@ class _CityFixAppState extends ConsumerState<CityFixApp> {
   Widget build(BuildContext context) {
     // Watch reactive GoRouter configuration
     final router = ref.watch(routerProvider);
+
+    // Watch push clicked events reactively to perform instant deep-link routing
+    ref.listen<String?>(pushEventProvider, (previous, next) {
+      if (next != null && next.isNotEmpty) {
+        // Grab global GoRouter context and push navigation
+        router.push('/complaints/$next');
+        // Clear active event so it won't re-trigger on hot restarts
+        ref.read(pushEventProvider.notifier).clearEvent();
+      }
+    });
 
     return MaterialApp.router(
       title: 'CityFix Mobile',
